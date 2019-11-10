@@ -18,7 +18,8 @@ def download(url, file):
         print("Download file... " + file + " ...")
         urlretrieve(url,file)
         print("File downloaded")
-
+        
+### Path for downloadign the sample data provided by UDACITY
 download('https://d17h27t6h515a5.cloudfront.net/topher/2016/December/584f6edd_data/data.zip','data.zip') #
 
 print("All the files are downloaded")
