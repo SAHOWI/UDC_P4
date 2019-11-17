@@ -10,8 +10,15 @@ from keras.layers import Flatten, Dense, Conv2D
 from keras.layers import Lambda, Cropping2D
 
 
+debug=0
+OS='unix'
+# OS='win'
 
-data_dir='C:\\temp\\data\\data\\'
+
+### local laptop implementation
+# data_dir='C:\\temp\\data\\data\\'
+### UDACITY WorkSpace implementation 
+data_dir='/home/workspace/CarND-Behavioral-Cloning-P3/data/'
 
 
 
@@ -22,7 +29,6 @@ def print_sep():
 # end of def: print_set
 
 
-debug=0
 
 
 
@@ -47,9 +53,16 @@ print("Logdata read")
 for line in lines:
     ### first fix path in log_file
     source_path = line[0]
-    tokens = source_path.split('\\')
+    if (OS == 'win'):
+        tokens = source_path.split('\\')
+    else:
+        tokens = source_path.split('/')
+        
     filename = tokens[-1]
-    local_path = data_dir + filename 
+    if (OS == 'win'):
+        local_path = data_dir + filename
+    else:
+        local_path = data_dir + 'IMG/' + filename
     if (debug == 1):
         print("Local Path = ", local_path)
     #image = cv2.imread(local_path)
