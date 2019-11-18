@@ -7,7 +7,7 @@ import numpy as np
 import keras
 from keras.models import Sequential
 from keras.layers import Flatten, Dense, Conv2D
-from keras.layers import Lambda, Cropping2D
+from keras.layers import Lambda, Cropping2D, Dropout
 from keras.layers.pooling import MaxPooling2D
 
 
@@ -141,15 +141,54 @@ with active_session():
     model = Sequential()
     # Preprocess incoming data, centered around zero with small standard deviation 
     model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160,320,3)))
-    model.add(Cropping2D(cropping=((75,25),(0,0))))
-    model.add(Conv2D(6,5,5, activation="relu"))
-    model.add(MaxPooling2D())
-    model.add(Conv2D(16,5,5, activation="relu"))
-    model.add(MaxPooling2D())
+    #model.add(Cropping2D(cropping=((75,25),(0,0))))
+    #model.add(Conv2D(6,5,5, activation="relu"))
+    #model.add(MaxPooling2D())
+    #model.add(Conv2D(16,5,5, activation="relu"))
+    #model.add(MaxPooling2D())
+    #model.add(Flatten())
+    #model.add(Dense(120))
+    #model.add(Dense(84))
+    #model.add(Dense(1))
+
+    # trim image to only see section with road
+    model.add(Cropping2D(cropping=((70,25),(0,0))))           
+
+    #layer 1- Convolution, no of filters- 24, filter size= 5x5, stride= 2x2
+    model.add(Conv2D(24,(5,5),strides=(2,2), activation='relu'))
+    
+
+    #layer 2- Convolution, no of filters- 36, filter size= 5x5, stride= 2x2
+    model.add(Conv2D(36,(5,5),strides=(2,2), activation='relu'))
+    
+    #layer 3- Convolution, no of filters- 48, filter size= 5x5, stride= 2x2
+    model.add(Conv2D(48,(5,5),strides=(2,2), activation='relu'))
+    
+    #layer 4- Convolution, no of filters- 64, filter size= 3x3, stride= 1x1
+    model.add(Conv2D(64,(3,3), activation='relu'))
+    
+
+    #layer 5- Convolution, no of filters- 64, filter size= 3x3, stride= 1x1
+    model.add(Conv2D(64,(3,3), activation='relu'))
+    
+
+    #flatten image from 2D to side by side
     model.add(Flatten())
-    model.add(Dense(120))
-    model.add(Dense(84))
-    model.add(Dense(1))
+
+    #layer 6- fully connected layer 1
+    model.add(Dense(100))
+    
+    #Adding a dropout layer to avoid overfitting. Here we are have given the dropout rate as 25% after first fully connected layer
+    model.add(Dropout(0.25))
+
+    #layer 7- fully connected layer 1
+    model.add(Dense(50))
+    
+    #layer 8- fully connected layer 1
+    model.add(Dense(10))
+    
+    #layer 9- fully connected layer 1
+    model.add(Dense(1)) #here the final layer will contain one value as this is a regression problem and not classification
 
     print_sep()
     print("Done building the Model")
@@ -178,6 +217,6 @@ with active_session():
     print_sep()
 
 
-    model.save('model.h5')
+    model.save('model_ng.h5')
 
 
